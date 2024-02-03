@@ -1,0 +1,36 @@
+import pandas as pd
+from scipy.stats import chi2_contingency
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('C:\\Users\\haile\\OneDrive\\Desktop\\MIT\\urop\\week 2\\all_epitopes.csv')
+
+df['seen_date'] = pd.to_datetime(df['seen_date'], errors='coerce')
+
+# Binary column for public epitopes
+df['is_public'] = df['is_public'].map({'yes': 1, 'no': 0})
+
+# Early pandemic dates = before 1st March 2021
+df['early_pandemic'] = (df['seen_date'] < pd.Timestamp('2021-03-01')).astype(int)
+
+# Create a binary column for mutations observed
+df['mutation_observed'] = (df['counts'] > 0).astype(int)
+
+# Plot the distribution of evescape scores for public epitopes (yes vs. no)
+sns.set_style('whitegrid')
+plt.figure(figsize=(14, 7))
+sns.scatterplot(data=df, x='position', y='evescape_score', hue='is_public', style='mutation_observed', size='counts', sizes=(20, 200))
+plt.title('Distribution of Evescape Scores for Public Epitopes')
+plt.xlabel('Position')
+plt.ylabel('Evescape Score')
+plt.legend(title='Is Public', loc='upper right')
+plt.show()
+
+# Plot the distribution of seen dates for public epitopes (yes vs. no)
+plt.figure(figsize=(14, 7))
+sns.scatterplot(data=df, x='seen_date', y='position', hue='is_public', style='mutation_observed', size='counts', sizes=(20, 200))
+plt.title('Distribution of Seen Dates for Public Epitopes')
+plt.xlabel('Seen Date')
+plt.ylabel('Position')
+plt.legend(title='Is Public', loc='upper right')
+plt.show()
