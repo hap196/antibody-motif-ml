@@ -1,0 +1,29 @@
+from Bio import SeqIO
+import pandas as pd
+
+fasta_file = "C:\\Users\\haile\\OneDrive\\Desktop\\MIT\\urop\\week 4\\imgt.fasta"
+
+data_heavy = []
+data_light = []
+
+# read the FASTA file
+for record in SeqIO.parse(fasta_file, "fasta"):
+    description = record.description.lower()
+    if "variable region" in description:
+        if "heavy chain" in description:
+            # extract the ID and sequence, then add to the list
+            data_heavy.append({"v_gene_id": record.id, "v_gene_sequence": str(record.seq)})
+        elif "light chain" in description:
+            data_light.append({"v_gene_id": record.id, "v_gene_sequence": str(record.seq)})
+
+df_heavy = pd.DataFrame(data_heavy)
+df_light = pd.DataFrame(data_light)
+
+csv_file_heavy = "v_gene_sequences_heavy_chain.csv"
+df_heavy.to_csv(csv_file_heavy, index=False)
+
+csv_file_light = "v_gene_sequences_light_chain.csv"
+df_light.to_csv(csv_file_light, index=False)
+
+print(f"Data saved to {csv_file_heavy}")
+print(f"Data saved to {csv_file_light}")
